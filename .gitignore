@@ -279,3 +279,5 @@ sparepal/media/
 .env
 .envs/*
 !.envs/.local/
+
+certs/*
