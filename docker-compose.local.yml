@@ -2,6 +2,8 @@ volumes:
   sparepal_local_postgres_data: {}
   sparepal_local_postgres_data_backups: {}
   sparepal_local_redis_data: {}
+  local_certs: {}  # New volume for certificates
+  local_media: {}  # New volume for media files
 
 services:
   django: &django
@@ -16,6 +18,7 @@ services:
       - mailpit
     volumes:
       - .:/app:z
+      - local_media:/app/local-dev/media  # Mount media volume
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
@@ -78,3 +81,18 @@ services:
     ports:
       - '5555:5555'
     command: /start-flower
+
+  # Nginx for cert
+  nginx-proxy:
+    build:
+      context: .
+      dockerfile: ./compose/local/nginx/Dockerfile
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs  # Mount certificates from local folder to Nginx
+    restart: always
+    depends_on:
+      - django
