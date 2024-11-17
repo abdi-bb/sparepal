@@ -22,3 +22,14 @@ djangorestframework==3.15.2  # https://github.com/encode/django-rest-framework
 django-cors-headers==4.6.0  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.27.2  # https://github.com/tfranzel/drf-spectacular
+
+# From my prev proj setup
+cryptography==43.0.1
+dj-rest-auth==6.0.0
+djangorestframework-simplejwt==5.3.1
+google-auth==2.29.0
+psycopg2-binary==2.9.9
+PyJWT==2.8.0
+python-decouple==3.8
+PyYAML==6.0.1
+requests==2.32.0
