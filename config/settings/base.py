@@ -1,6 +1,7 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -77,15 +78,20 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     "corsheaders",
     "drf_spectacular",
 ]
 
 LOCAL_APPS = [
     "sparepal.users",
+    "sparepal.companies",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -104,7 +110,7 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.CustomUser"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
@@ -190,7 +196,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "sparepal.users.context_processors.allauth_settings",
+                # "sparepal.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -328,7 +334,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -346,3 +352,58 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+# My staff
+
+# Identify user using email
+ACCOUNT_USER_MODEL_USERNAME_FIELD = (
+    None  # Tell allauth that the User model has no username field
+)
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ACCOUNT_EMAIL_VERIFICATION = 'none' # Override the above setting to configure for social login(No email verification required, as the email is already verified by the social provider)
+# activate the email account once the user clicks on the link
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+
+# Rest Framework settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # 'rest_framework.authentication.SessionAuthentication', # Session Based Authentication
+        "rest_framework.authentication.TokenAuthentication",  # Token Based Authentication
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT Authentication
+        # 'dj_rest_auth.jwt_auth.JWTCookieAuthentication', # JWT Cookie Authentication
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# JWT settings
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=90),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=180),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+# Rest auth settings
+REST_AUTH = {
+    # Serializer settings
+    "LOGIN_SERIALIZER": "sparepal.users.api.serializers.CustomUserLoginSerializer",
+    "REGISTER_SERIALIZER": "sparepal.users.api.serializers.CustomUserRegisterSerializer",
+    "USER_DETAILS_SERIALIZER": "sparepal.users.api.serializers.CustomUserDetailsSerializer",
+    # Password Settings
+    "OLD_PASSWORD_FIELD_ENABLED": True,
+    "LOGOUT_ON_PASSWORD_CHANGE": True,
+    # from the library demo # Uncomment when using JWT
+    # 'SESSION_LOGIN': True,
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "email-access-token",
+    "JWT_AUTH_REFRESH_COOKIE": "email-refresh-token",
+    "JWT_AUTH_HTTPONLY": False,
+}
+
+# write custom url link that is to be sent via email
+ACCOUNT_ADAPTER = "sparepal.users.api.views.CustomAccountAdapter"
