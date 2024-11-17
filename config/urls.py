@@ -23,17 +23,16 @@ urlpatterns = [
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    # Schema generation and documentation endpoints
+    path(
+        "api/schema/", SpectacularAPIView.as_view(), name="schema"
+    ),  # Use consistent naming for schema
     path(
         "api/docs/",
-        SpectacularSwaggerView.as_view(url_name="api-schema"),
-        name="api-docs",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
     ),
-    path(
-        "api/schema/redoc/",
-        SpectacularRedocView.as_view(url_name="schema"),
-        name="redoc",
-    ),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 # Debug-only URLs
