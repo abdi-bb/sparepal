@@ -33,28 +33,28 @@ urlpatterns = router.urls
 urlpatterns += [
     # Registration and email confirmation
     path(
-        "registration/account-confirm-email/<str:key>/",
+        "auth/registration/account-confirm-email/<str:key>/",
         ConfirmEmailView.as_view(),
     ),  # Needs to be defined before the registration path
-    path("", include("dj_rest_auth.urls")),
-    path("registration/", include("dj_rest_auth.registration.urls")),
+    path("auth/", include("dj_rest_auth.urls")),
+    path("auth/registration/", include("dj_rest_auth.registration.urls")),
     # Email verification
     path(
-        "account-confirm-email/",
+        "auth/account-confirm-email/",
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
     # Password reset
     path(
-        "password/reset/confirm/<slug:uidb64>/<slug:token>/",
+        "auth/password/reset/confirm/<slug:uidb64>/<slug:token>/",
         PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
     # Profile-related views
     path("profile/", ProfileDetailsAPIView.as_view(), name="profile-detail"),
     # Social login
-    path("google/", GoogleLogin.as_view(), name="google_login"),
-    path("~redirect/", view=UserRedirectView.as_view(), name="redirect"),
+    path("auth/google/", GoogleLogin.as_view(), name="google_login"),
+    path("auth/~redirect/", view=UserRedirectView.as_view(), name="redirect"),
 ]
 
 # Non-viewset URLs for company
