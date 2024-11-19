@@ -6,28 +6,34 @@ from django.urls import include
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import SimpleRouter
+from rest_framework_nested import routers
 
-from sparepal.companies.api.views import CompanyDetailAddressViewSet
-from sparepal.companies.api.views import CompanyManagerDetailViewSet
+from sparepal.companies.api.views import AddressViewSet
 from sparepal.companies.api.views import CompanyViewSet
 from sparepal.companies.api.views import GetChoicesAPIView
+from sparepal.companies.api.views import ManagerViewSet
 from sparepal.users.api.views import GoogleLogin
 from sparepal.users.api.views import ProfileDetailsAPIView
 from sparepal.users.api.views import UserRedirectView
 
+# Use DefaultRouter in debug mode for the browsable API; otherwise, use SimpleRouter
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
 # Register users-related viewsets
 
 
 # Register company-related viewsets
-router.register(r"companies", CompanyViewSet)
-router.register(r"company-detail-address", CompanyDetailAddressViewSet)
-router.register(r"company-manager-detail", CompanyManagerDetailViewSet)
+# Register companies root-level router
+router.register(r"companies", CompanyViewSet, basename="companies")
 
+# Create nested routers for `Address` and `Manager`
+companies_router = routers.NestedDefaultRouter(router, "companies", lookup="company")
+
+companies_router.register(r"addresses", AddressViewSet, basename="addresses")
+companies_router.register(r"managers", ManagerViewSet, basename="managers")
 
 # Base urlpatterns
-urlpatterns = router.urls
+urlpatterns = router.urls + companies_router.urls
 
 # Non-viewset URLs for users
 urlpatterns += [
@@ -59,5 +65,5 @@ urlpatterns += [
 
 # Non-viewset URLs for company
 urlpatterns += [
-    path("choices/", GetChoicesAPIView.as_view(), name="get_choices"),
+    path("companies/choices/", GetChoicesAPIView.as_view(), name="get_choices"),
 ]

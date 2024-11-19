@@ -79,7 +79,7 @@ class Company(models.Model):
         return self.company_name
 
 
-class CompanyDetailAddress(models.Model):
+class Address(models.Model):
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -97,7 +97,7 @@ class CompanyDetailAddress(models.Model):
         return self.region
 
 
-class CompanyManagerDetail(models.Model):
+class Manager(models.Model):
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,

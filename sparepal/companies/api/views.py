@@ -1,5 +1,3 @@
-from django.shortcuts import get_object_or_404
-
 # Correct order of imports
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -17,14 +15,14 @@ from sparepal.companies.models import SITE_ID_CHOICES
 from sparepal.companies.models import SUB_GROUP_DESCRIPTION_CHOICES
 from sparepal.companies.models import WOREDA_CHOICES
 from sparepal.companies.models import ZONE_CHOICES
+from sparepal.companies.models import Address
 from sparepal.companies.models import Company
-from sparepal.companies.models import CompanyDetailAddress
-from sparepal.companies.models import CompanyManagerDetail
+from sparepal.companies.models import Manager
 
 from .permissions import IsCompanyOwner
-from .serializers import CompanyDetailAddressSerializer
-from .serializers import CompanyManagerDetailSerializer
+from .serializers import AddressSerializer
 from .serializers import CompanySerializer
+from .serializers import ManagerSerializer
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -42,9 +40,9 @@ class CompanyViewSet(viewsets.ModelViewSet):
         serializer.save(created_by=self.request.user)
 
 
-class CompanyDetailAddressViewSet(viewsets.ModelViewSet):
-    queryset = CompanyDetailAddress.objects.all()
-    serializer_class = CompanyDetailAddressSerializer
+class AddressViewSet(viewsets.ModelViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated, IsCompanyOwner]
 
     def get_queryset(self):
@@ -52,35 +50,14 @@ class CompanyDetailAddressViewSet(viewsets.ModelViewSet):
         # Filter addresses for companies owned by the user
         return queryset.filter(company__created_by=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        data = request.data.copy()  # Make mutable copy of request data
-        company_id = data.pop("company_id", None)
-
-        if company_id is None:
-            return Response(
-                {"error": "company_id is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            company_id = int(company_id)
-        except ValueError:
-            return Response(
-                {"error": "company_id must be a valid integer."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        company = get_object_or_404(Company, id=company_id, created_by=request.user)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(company=company)  # Link the address to the company
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        company_id = self.kwargs.get("company_pk")  # Get company_pk from URL
+        serializer.save(company_id=company_id)  # Save using company_id
 
 
-class CompanyManagerDetailViewSet(viewsets.ModelViewSet):
-    queryset = CompanyManagerDetail.objects.all()
-    serializer_class = CompanyManagerDetailSerializer
+class ManagerViewSet(viewsets.ModelViewSet):
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
     permission_classes = [IsAuthenticated, IsCompanyOwner]
 
     def get_queryset(self):
@@ -88,30 +65,9 @@ class CompanyManagerDetailViewSet(viewsets.ModelViewSet):
         # Filter managers for companies owned by the user
         return querset.filter(company__created_by=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        data = request.data.copy()  # Make mutable copy of request data
-        company_id = data.pop("company_id", None)
-
-        if company_id is None:
-            return Response(
-                {"error": "company_id is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            company_id = int(company_id)
-        except ValueError:
-            return Response(
-                {"error": "company_id must be a valid integer."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        company = get_object_or_404(Company, id=company_id, created_by=request.user)
-
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(company=company)  # Link the manager to the company
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        company_id = self.kwargs.get("company_pk")  # Get company_pk from URL
+        serializer.save(company_id=company_id)  # Save using company_id
 
 
 # Django API Endpoint to Serve Choices
