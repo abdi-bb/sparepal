@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
+from sparepal.companies.models import Address
 from sparepal.companies.models import Company
-from sparepal.companies.models import CompanyDetailAddress
-from sparepal.companies.models import CompanyManagerDetail
+from sparepal.companies.models import Manager
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -23,19 +23,17 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
-class CompanyDetailAddressSerializer(serializers.ModelSerializer):
+class AddressSerializer(serializers.ModelSerializer):
     company = serializers.CharField(read_only=True)
-    company_id = serializers.CharField(source="company.id", read_only=True)
 
     class Meta:
-        model = CompanyDetailAddress
+        model = Address
         fields = "__all__"
 
 
-class CompanyManagerDetailSerializer(serializers.ModelSerializer):
+class ManagerSerializer(serializers.ModelSerializer):
     company = serializers.CharField(read_only=True)
-    company_id = serializers.CharField(source="company.id", read_only=True)
 
     class Meta:
-        model = CompanyManagerDetail
+        model = Manager
         fields = "__all__"
