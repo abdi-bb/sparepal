@@ -75,6 +75,9 @@ class Company(models.Model):
         related_name="companies_created",
     )
 
+    class Meta:
+        verbose_name_plural = "Companies"
+
     def __str__(self):
         return self.company_name
 
