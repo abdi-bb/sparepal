@@ -407,3 +407,10 @@ REST_AUTH = {
 
 # write custom url link that is to be sent via email
 ACCOUNT_ADAPTER = "sparepal.users.api.views.CustomAccountAdapter"
+
+# CSRF Trusted origins(Front-end)
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://my-dev.local",
+]
