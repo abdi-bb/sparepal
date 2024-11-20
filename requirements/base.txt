@@ -25,9 +25,9 @@ drf-spectacular==0.27.2  # https://github.com/tfranzel/drf-spectacular
 
 # From my prev proj setup
 cryptography==43.0.3
-dj-rest-auth==6.0.0
+dj-rest-auth==7.0.0
 djangorestframework-simplejwt==5.3.1
-google-auth==2.29.0
+google-auth==2.36.0
 psycopg2-binary==2.9.10
 PyJWT==2.10.0
 python-decouple==3.8
