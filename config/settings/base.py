@@ -379,7 +379,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication', # Session Based Authentication
         "rest_framework.authentication.TokenAuthentication",  # Token Based Authentication
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT Authentication
-        # 'dj_rest_auth.jwt_auth.JWTCookieAuthentication', # JWT Cookie Authentication
+        # "dj_rest_auth.jwt_auth.JWTCookieAuthentication",  # JWT Cookie Authenticatio(comment out not to use cookies and use Authorization header)
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -403,8 +403,8 @@ REST_AUTH = {
     # from the library demo # Uncomment when using JWT
     # 'SESSION_LOGIN': True,
     "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "email-access-token",
-    "JWT_AUTH_REFRESH_COOKIE": "email-refresh-token",
+    # "JWT_AUTH_COOKIE": "_auth",  # Don't send access token cookie
+    # "JWT_AUTH_REFRESH_COOKIE": "_refresh", # Don't send refresh token cookie
     "JWT_AUTH_HTTPONLY": False,
 }
 
