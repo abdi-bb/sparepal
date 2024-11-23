@@ -8,7 +8,6 @@ from sparepal.users.api.views import GoogleLogin
 from sparepal.users.api.views import ProfileDetailsAPIView
 from sparepal.users.api.views import UserRedirectView
 
-app_name = "users"
 # Non-viewset URLs for users
 urlpatterns = [
     # Registration and email confirmation
@@ -34,5 +33,5 @@ urlpatterns = [
     path("profile/", ProfileDetailsAPIView.as_view(), name="profile-detail"),
     # Social login
     path("auth/google/", GoogleLogin.as_view(), name="google_login"),
-    path("auth/~redirect/", view=UserRedirectView.as_view(), name="redirect"),
+    path("~redirect/", view=UserRedirectView.as_view(), name="redirect"),
 ]
