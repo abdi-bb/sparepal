@@ -95,6 +95,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    @property
+    def name(self):
+        """
+        Dynamic 'name' property to provide compatibility with code expecting
+        a 'name' attribute(Eg. SocialAccountAdapter).
+        It uses the get_full_name() method.
+        """
+        return self.get_full_name()
+
 
 class Profile(models.Model):
     user = models.OneToOneField(

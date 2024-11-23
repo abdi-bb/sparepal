@@ -10,7 +10,7 @@ if typing.TYPE_CHECKING:
     from allauth.socialaccount.models import SocialLogin
     from django.http import HttpRequest
 
-    from sparepal.users.models import User
+    from sparepal.users.models import CustomUser
 
 
 class AccountAdapter(DefaultAccountAdapter):
@@ -31,7 +31,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         request: HttpRequest,
         sociallogin: SocialLogin,
         data: dict[str, typing.Any],
-    ) -> User:
+    ) -> CustomUser:
         """
         Populates user information from social provider info.
 
