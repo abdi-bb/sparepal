@@ -98,7 +98,7 @@ class GoogleLogin(SocialLoginView):
 
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = "http://127.0.0.1:8000"
+    callback_url = "http://localhost:8000/api/auth/google/"
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
