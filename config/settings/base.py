@@ -112,7 +112,10 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.CustomUser"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "users:redirect"
+# LOGIN_REDIRECT_URL = "users:redirect"
+# namespacing does not work with dj-rest-auth because its design focuses on a flat URL
+# structure and namespace-unaware views
+LOGIN_REDIRECT_URL = "/auth/~redirect/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
