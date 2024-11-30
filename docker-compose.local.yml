@@ -1,12 +1,11 @@
 volumes:
   sparepal_local_postgres_data: {}
   sparepal_local_postgres_data_backups: {}
-  sparepal_local_redis_data: {}
   local_certs: {}  # New volume for certificates
   local_media: {}  # New volume for media files
 
 services:
-  django: &django
+  django:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
@@ -14,8 +13,6 @@ services:
     container_name: sparepal_local_django
     depends_on:
       - postgres
-      - redis
-      - mailpit
     volumes:
       - .:/app:z
       - local_media:/app/local-dev/media  # Mount media volume
@@ -38,49 +35,6 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  mailpit:
-    image: docker.io/axllent/mailpit:latest
-    container_name: sparepal_local_mailpit
-    ports:
-      - "8025:8025"
-
-  redis:
-    image: docker.io/redis:6
-    container_name: sparepal_local_redis
-
-    volumes:
-      - sparepal_local_redis_data:/data
-
-
-  celeryworker:
-    <<: *django
-    image: sparepal_local_celeryworker
-    container_name: sparepal_local_celeryworker
-    depends_on:
-      - redis
-      - postgres
-      - mailpit
-    ports: []
-    command: /start-celeryworker
-
-  celerybeat:
-    <<: *django
-    image: sparepal_local_celerybeat
-    container_name: sparepal_local_celerybeat
-    depends_on:
-      - redis
-      - postgres
-      - mailpit
-    ports: []
-    command: /start-celerybeat
-
-  flower:
-    <<: *django
-    image: sparepal_local_flower
-    container_name: sparepal_local_flower
-    ports:
-      - '5555:5555'
-    command: /start-flower
 
   # Nginx for cert
   nginx-proxy:

@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from sparepal.users.models import Profile
 
 from .permissions import IsUserProfileOwner
+from .serializers import CustomSocialLoginSerializer
 from .serializers import CustomUserDetailsSerializer
 from .serializers import CustomUserLoginSerializer
 from .serializers import CustomUserRegisterSerializer
@@ -98,7 +99,8 @@ class GoogleLogin(SocialLoginView):
 
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = "http://localhost:8000/api/auth/google/"
+    callback_url = config("CALLBACK_URL")
+    serializer_class = CustomSocialLoginSerializer
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):

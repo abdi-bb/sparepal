@@ -280,4 +280,6 @@ sparepal/media/
 .envs/*
 !.envs/.local/
 
+# My staff
 certs/*
+*.bak*

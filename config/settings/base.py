@@ -24,7 +24,7 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "Africa/Addis_Ababa"
+TIME_ZONE = "UTC"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
@@ -78,20 +78,14 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_framework_simplejwt",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
     "corsheaders",
     "drf_spectacular",
 ]
 
 LOCAL_APPS = [
     "sparepal.users",
-    "sparepal.companies",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -110,12 +104,9 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-# LOGIN_REDIRECT_URL = "users:redirect"
-# namespacing does not work with dj-rest-auth because its design focuses on a flat URL
-# structure and namespace-unaware views
-LOGIN_REDIRECT_URL = "/auth/~redirect/"
+LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
@@ -199,7 +190,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                # "sparepal.users.context_processors.allauth_settings",
+                "sparepal.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -241,7 +232,7 @@ EMAIL_TIMEOUT = 5
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Abdi Berhe""", "abdi-berhe@spare-pal.com")]
+ADMINS = [("""Abdi Berhe""", "abdiberhe@gmail.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
@@ -272,41 +263,9 @@ LOGGING = {
 }
 
 REDIS_URL = env("REDIS_URL", default="redis://redis:6379/0")
+REDIS_SSL = REDIS_URL.startswith("rediss://")
 
-# Celery
-# ------------------------------------------------------------------------------
-if USE_TZ:
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
-    CELERY_TIMEZONE = TIME_ZONE
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = REDIS_URL
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
-CELERY_RESULT_BACKEND = REDIS_URL
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-extended
-CELERY_RESULT_EXTENDED = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-always-retry
-# https://github.com/celery/celery/pull/6122
-CELERY_RESULT_BACKEND_ALWAYS_RETRY = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-max-retries
-CELERY_RESULT_BACKEND_MAX_RETRIES = 10
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
-CELERY_ACCEPT_CONTENT = ["json"]
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
-CELERY_TASK_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
-CELERY_RESULT_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
-# TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_TIME_LIMIT = 5 * 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
-# TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_SOFT_TIME_LIMIT = 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-send-task-events
-CELERY_WORKER_SEND_TASK_EVENTS = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
-CELERY_TASK_SEND_SENT_EVENT = True
+
 # django-allauth
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
@@ -337,7 +296,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -358,6 +317,30 @@ SPECTACULAR_SETTINGS = {
 
 
 # My staff
+
+THIRD_PARTY_APPS_MORE = [
+    "allauth.socialaccount.providers.google",
+    "rest_framework_simplejwt",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+]
+
+LOCAL_APPS_MORE = [
+    "sparepal.companies",
+]
+
+THIRD_PARTY_APPS += THIRD_PARTY_APPS_MORE
+LOCAL_APPS += LOCAL_APPS_MORE
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+
+# Override AUTH_USER_MODEL
+AUTH_USER_MODEL = "users.CustomUser"
+
+# Override LOGIN_REDIRECT_URL
+# namespacing does not work with dj-rest-auth because its design focuses on a flat URL
+# structure and namespace-unaware views
+LOGIN_REDIRECT_URL = "/auth/~redirect/"
 
 # Identify user using email
 ACCOUNT_USER_MODEL_USERNAME_FIELD = (
@@ -381,7 +364,17 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # JWT Authentication
         # "dj_rest_auth.jwt_auth.JWTCookieAuthentication",  # JWT Cookie Authenticatio(comment out not to use cookies and use Authorization header)
     ),
+    "DEFAULT_PERMISSION_CLASSES": (),  # Override the above setting
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# Temporarily open docs endpoint to all
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Sparepal API",
+    "DESCRIPTION": "Documentation of API endpoints of Sparepal",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": [],
+    "SCHEMA_PATH_PREFIX": "/api/",
 }
 
 # JWT settings
@@ -410,10 +403,3 @@ REST_AUTH = {
 
 # write custom url link that is to be sent via email
 ACCOUNT_ADAPTER = "sparepal.users.api.views.CustomAccountAdapter"
-
-# CSRF Trusted origins(Front-end)
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://my-dev.local",
-]

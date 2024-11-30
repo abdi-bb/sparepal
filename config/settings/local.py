@@ -1,4 +1,6 @@
 # ruff: noqa: E501
+from decouple import config
+
 from .base import *  # noqa: F403
 from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
@@ -11,16 +13,11 @@ DEBUG = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
-    default="alIyRREjbFljVOTQLzqEz2avw3ZMMc6LN35nqylc4DmbJtoj4Lqt9k6DXdYYG5gR",
+    default="wWEDLgAQIw4U4bR9DOoo5RZqJ8gvamKSs2ShbACE3T914baQyDLdmwV2sdlk26Bh",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [
-    "localhost",
-    "0.0.0.0",  # noqa: S104 - Allow binding to all interfaces in development
-    "127.0.0.1",
-    "my-dev.local",
-    "app",
-]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -34,10 +31,11 @@ CACHES = {
 
 # EMAIL
 # ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = 1025
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend",
+)
 
 # WhiteNoise
 # ------------------------------------------------------------------------------
@@ -75,8 +73,29 @@ if env("USE_DOCKER") == "yes":
 INSTALLED_APPS += ["django_extensions"]
 # Celery
 # ------------------------------------------------------------------------------
-
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
-CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+# Override ALLOWED_HOSTS settings
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",  # noqa: S104 - Allow binding to all interfaces in development
+    "127.0.0.1",
+    "my-dev.local",
+    "app",
+]
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "abdiberhe@gmail.com"  # Your Gmail address
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default=None)
+
+
+# CSRF Trusted origins(Front-end)
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://my-dev.local",
+]
