@@ -99,7 +99,10 @@ class GoogleLogin(SocialLoginView):
 
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = config("CALLBACK_URL")
+    callback_url = config(
+        "CALLBACK_URL",
+        default="http://localhost:5000/api/auth/google/",
+    )
     serializer_class = CustomSocialLoginSerializer
 
 
