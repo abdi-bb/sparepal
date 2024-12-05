@@ -1,6 +1,4 @@
 # ruff: noqa: E501
-from decouple import config
-
 from .base import *  # noqa: F403
 from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
@@ -17,7 +15,6 @@ SECRET_KEY = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
-
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -71,10 +68,12 @@ if env("USE_DOCKER") == "yes":
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]
-# Celery
 # ------------------------------------------------------------------------------
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+from decouple import config  # noqa: E402
 
 # Override ALLOWED_HOSTS settings
 ALLOWED_HOSTS = [
