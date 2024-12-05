@@ -1,7 +1,6 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
-from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -317,6 +316,7 @@ SPECTACULAR_SETTINGS = {
 
 
 # My staff
+from datetime import timedelta  # noqa: E402
 
 THIRD_PARTY_APPS_MORE = [
     "allauth.socialaccount.providers.google",
